@@ -1,3 +1,7 @@
 ### Trabalho de Avaliação de Desempenho
 
-#### Semestre 2016.2
+#### UECE - Universidade Estadual do Ceará 
+#### Curso de Ciência da Computação
+##### Semestre 2016.2
+
+
