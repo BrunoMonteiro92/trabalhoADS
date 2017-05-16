@@ -3,8 +3,8 @@
 #include <ctime>
 #include <cmath>
 #include <fstream>
-#include <iomanip>
 #include <sstream>
+#include <iomanip>
 #include <string>
 
 #define ROWS 10
@@ -47,22 +47,28 @@ double zeroToOne(){
     return (double)rand()/(double)RAND_MAX;
 }
 
+double roundNumber(double x){
+    return ceilf(x * 100) / 100;
+}
+
 //Coluna 2 e 4 -> método de monte carlo usando as matrizes
 double generateColumn(double m[ROWS][COLUMNS]){
+    double urounded = 0;
     double u = zeroToOne();
     u = zeroToOne();
 	bool v = true;
 	double result = 0;
-	
+	urounded = roundNumber(u);
+	cout << "Gerou o numero aleatorio: " << urounded << endl;
+
 	while (v == true){
 		for (int row=0; row<10; row++){
-			if (u >= m[row][1] && u <= m[row][2]){
+			if (urounded >= m[row][1] && urounded <= m[row][2]){
 				result = m[row][0];
 				v = false;
 			}
 		}
 	}
-	
 	return result;
 }
 
