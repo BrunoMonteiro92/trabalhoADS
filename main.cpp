@@ -116,7 +116,9 @@ int main(){
         packageTimeSystem = clockFinal - tecClock;   //Coluna 8 -> Tempo do pacote no sistema
         freeTime = initialTime - clockAux;        //Coluna 9 -> Tempo livre do operador
 
-        cout << countPackage << " " << tec << " " << tecClock << " " << serviceTime << " " << initialTime << " " <<  packageTimeQueue << " " << clockFinal << " " << packageTimeSystem << " " << freeTime << endl;
+        cout << countPackage << " " << tec << " " << tecClock << " "
+            << serviceTime << " " << initialTime << " " <<  packageTimeQueue << " "
+            << clockFinal << " " << packageTimeSystem << " " << freeTime << endl;
         file << countPackage << ";" << replaceChar(to_string(tec), '.', ',') << ";" << replaceChar(to_string(tecClock), '.', ',')  << ";"
              << replaceChar(to_string(serviceTime), '.', ',')  << ";" << replaceChar(to_string(initialTime), '.', ',')  << ";" << replaceChar(to_string(packageTimeQueue), '.', ',')  << ";"
              << replaceChar(to_string(clockFinal), '.', ',')  << ";" << replaceChar(to_string(packageTimeSystem), '.', ',')  << ";" << replaceChar(to_string(freeTime), '.', ',')  << ";\n";
