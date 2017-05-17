@@ -42,17 +42,38 @@ double matTs [ROWS][COLUMNS] = {
 	{(double)(45+100)/2, 1.00, 1.00}
 };
 
-//FunÁ„o para gerar n˙mero aleatÛrio entre 0 e 1
+//Fun√ß√£o para gerar n√∫mero aleat√≥rio entre 0 e 1
 double zeroToOne(){
     return (double)rand()/(double)RAND_MAX;
 }
 
 double roundNumber(double x){
-    return ceilf(x * 100) / 100;
+	return ceilf(x * 100) / 100;
 }
 
-//Coluna 2 e 4 -> mÈtodo de monte carlo usando as matrizes
-double generateColumn(double m[ROWS][COLUMNS]){
+//Fun√ß√£o para gerar o tempo (LETRA A)
+int generateTime(int x, int y){
+	return rand() % (y-x+1) + x;
+}
+
+//Fun√ß√£o para gerar a tabela da Letra A
+double**  generateColumnTB(int menor, int maior){
+	srand((unsigned)time(0));
+	double m[2][3];
+	for (int row=0; row<2; row++){
+		for (int col=0; col<3; col++){
+			if  (row == 0)
+				m[row][col] = generateTime(menor, maior);
+			else if (row == 1)
+				m[row][col] = roundNumber(zeroToOne());
+		}
+	}
+	
+	return m;
+}
+
+//Coluna 2 e 4 -> m√©todo de monte carlo usando as matrizes (Letra B)
+double generateColumnMC(double m[ROWS][COLUMNS]){
     double urounded = 0;
     double u = zeroToOne();
     u = zeroToOne();
@@ -72,7 +93,7 @@ double generateColumn(double m[ROWS][COLUMNS]){
 	return result;
 }
 
-//FunÁ„o para transformar o valor em string
+//Fun√ß√£o para transformar o valor em string
 string to_string(double value) {
     stringstream sstr;
     string straux;
@@ -82,7 +103,7 @@ string to_string(double value) {
     return straux;
 }
 
-//FunÁ„o para substituir os '.' em ',' (para melhor visualizaÁ„o na tabela)
+//Fun√ß√£o para substituir os '.' em ',' (para melhor visualiza√ß√£o na tabela)
 string replaceChar(string str, char ch1, char ch2) {
     for (int i = 0; i < str.length(); ++i) {
         if (str[i] == ch1)
@@ -98,21 +119,21 @@ int main(){
 
     ofstream file;
     file.open("resultado.csv");
-    file << "N∫ Pacote;Tempo desde a ˙ltima chegada do pacote anterior;Tempo de chegada no relÛgio;Tempo de serviÁo;Tempo de inÌcio do roteamento;Tempo do pacote na fila do roteador;Tempo final do roteamento no relÛgio;Tempo do pacote no roteador;Tempo livre do servidor;\n";
+    file << "N¬∫ Pacote;Tempo desde a √∫ltima chegada do pacote anterior;Tempo de chegada no rel√≥gio;Tempo de servi√ßo;Tempo de in√≠cio do roteamento;Tempo do pacote na fila do roteador;Tempo final do roteamento no rel√≥gio;Tempo do pacote no roteador;Tempo livre do servidor;\n";
 
     for (int countPackage = 1; countPackage <= numPackages; countPackage++){
-        tec = generateColumn(matTec);        //Coluna 2 -> Tempo desde a ˙ltima chegada
-        tecClock = clockBefore + tec;         //Coluna 3 -> Tempo de chegada no relÛgio
-        serviceTime = generateColumn(matTs);               //Coluna 4 -> Tempo de serviÁo
+        tec = generateColumnMC(matTec);        //Coluna 2 -> Tempo desde a √∫ltima chegada
+        tecClock = clockBefore + tec;         //Coluna 3 -> Tempo de chegada no rel√≥gio
+        serviceTime = generateColumnMC(matTs);               //Coluna 4 -> Tempo de servi√ßo
 
-        //Coluna 5 -> Tempo de inÌcio do serviÁo no relÛgio
+        //Coluna 5 -> Tempo de in√≠cio do servi√ßo no rel√≥gio
         if (tecClock > clockAux)
             initialTime = tecClock;
         else
             initialTime = clockAux;
 
         packageTimeQueue = initialTime - tecClock;   //Coluna 6 -> Tempo do pacote na fila
-        clockFinal = initialTime + serviceTime;              //Coluna 7 -> Tempo final do serviÁo no relÛgio
+        clockFinal = initialTime + serviceTime;              //Coluna 7 -> Tempo final do servi√ßo no rel√≥gio
         packageTimeSystem = clockFinal - tecClock;   //Coluna 8 -> Tempo do pacote no sistema
         freeTime = initialTime - clockAux;        //Coluna 9 -> Tempo livre do operador
 
