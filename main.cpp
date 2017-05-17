@@ -1,3 +1,12 @@
+/***
+UECE - Universidade Estadual do Ceará
+Curso de Ciência da Computação
+6ª Lista - Avaliação de Desempenho de Sistemas
+
+Aluno: Bruno Marques Monteiro
+Matrícula: 1157934
+***/
+
 #include <cstdlib>
 #include <iostream>
 #include <ctime>
@@ -16,7 +25,19 @@ int numPackages = 20;
 int clockBefore = 0;
 int clockAux = 0;
 
-double matTec [ROWS][COLUMNS] = {
+double matTecA [3][3] = {
+    {10, 0.01, 0.35},
+    {12, 0.36, 0.75},
+    {14, 0.76, 1.00}
+};
+
+double matTsA [3][3] = {
+    {9, 0.01, 0.30},
+    {10, 0.31, 0.80},
+    {11, 0.81, 1.0}
+};
+
+double matTecB [ROWS][COLUMNS] = {
 	{(double)(0+5)/2, 0.01, 0.35},
 	{(double)(5+10)/2, 0.36, 0.54},
 	{(double)(10+15)/2, 0.55, 0.73},
@@ -29,7 +50,7 @@ double matTec [ROWS][COLUMNS] = {
 	{(double)(45+50)/2, 0.00, 0.00}
 };
 
-double matTs [ROWS][COLUMNS] = {
+double matTsB [ROWS][COLUMNS] = {
 	{(double)(0+5)/2, 0.01, 0.06},
 	{(double)(5+10)/2, 0.07, 0.11},
 	{(double)(10+15)/2, 0.12, 0.34},
@@ -47,29 +68,31 @@ double zeroToOne(){
     return (double)rand()/(double)RAND_MAX;
 }
 
+//Função para arredondar o número para 2 casas decimais
 double roundNumber(double x){
 	return ceilf(x * 100) / 100;
 }
 
-//Função para gerar o tempo (LETRA A)
-int generateTime(int x, int y){
-	return rand() % (y-x+1) + x;
-}
 
-//Função para gerar a tabela da Letra A
-double**  generateColumnTB(int menor, int maior){
-	srand((unsigned)time(0));
-	double m[2][3];
-	for (int row=0; row<2; row++){
-		for (int col=0; col<3; col++){
-			if  (row == 0)
-				m[row][col] = generateTime(menor, maior);
-			else if (row == 1)
-				m[row][col] = roundNumber(zeroToOne());
+//Coluna 2 e 4 -> (Letra a)
+double generateColumnSM(double m[3][3]){
+    double urounded = 0;
+    double u = zeroToOne();
+    u = zeroToOne();
+	bool v = true;
+	double result = 0;
+	urounded = roundNumber(u);
+	cout << "Gerou o numero aleatorio: " << urounded << endl;
+
+	while (v == true){
+		for (int row=0; row<3; row++){
+			if (urounded >= m[row][1] && urounded <= m[row][2]){
+				result = m[row][0];
+				v = false;
+			}
 		}
 	}
-	
-	return m;
+	return result;
 }
 
 //Coluna 2 e 4 -> método de monte carlo usando as matrizes (Letra B)
@@ -116,37 +139,79 @@ string replaceChar(string str, char ch1, char ch2) {
 int main(){
     srand((unsigned)time(0));
     double tec, tecClock, serviceTime, initialTime = 0, packageTimeQueue, packageTimeSystem, freeTime, clockFinal;
-
+    int opcao;
     ofstream file;
-    file.open("resultado.csv");
-    file << "Nº Pacote;Tempo desde a última chegada do pacote anterior;Tempo de chegada no relógio;Tempo de serviço;Tempo de início do roteamento;Tempo do pacote na fila do roteador;Tempo final do roteamento no relógio;Tempo do pacote no roteador;Tempo livre do servidor;\n";
 
-    for (int countPackage = 1; countPackage <= numPackages; countPackage++){
-        tec = generateColumnMC(matTec);        //Coluna 2 -> Tempo desde a última chegada
-        tecClock = clockBefore + tec;         //Coluna 3 -> Tempo de chegada no relógio
-        serviceTime = generateColumnMC(matTs);               //Coluna 4 -> Tempo de serviço
+    cout << "Digite a opcao desejada: " << endl;
+    cout << "1 - Simulacao de acordo com a Letra A" << endl;
+    cout << "2 - Simulacao de acordo com a Letra B (Metodo de Monte Carlo)" << endl;
+    cin >> opcao;
 
-        //Coluna 5 -> Tempo de início do serviço no relógio
-        if (tecClock > clockAux)
-            initialTime = tecClock;
-        else
-            initialTime = clockAux;
+    switch(opcao){
+        case 1:
+            file.open("letraA.csv");
+            file << "Nº Pacote;Tempo desde a última chegada do pacote anterior;Tempo de chegada no relógio;Tempo de serviço;Tempo de início do roteamento;Tempo do pacote na fila do roteador;Tempo final do roteamento no relógio;Tempo do pacote no roteador;Tempo livre do servidor;\n";
 
-        packageTimeQueue = initialTime - tecClock;   //Coluna 6 -> Tempo do pacote na fila
-        clockFinal = initialTime + serviceTime;              //Coluna 7 -> Tempo final do serviço no relógio
-        packageTimeSystem = clockFinal - tecClock;   //Coluna 8 -> Tempo do pacote no sistema
-        freeTime = initialTime - clockAux;        //Coluna 9 -> Tempo livre do operador
+            for (int countPackage = 1; countPackage <= numPackages; countPackage++){
+                tec = generateColumnSM(matTecA);        //Coluna 2 -> Tempo desde a última chegada
+                tecClock = clockBefore + tec;         //Coluna 3 -> Tempo de chegada no relógio
+                serviceTime = generateColumnMC(matTsA);               //Coluna 4 -> Tempo de serviço
 
-        cout << countPackage << " " << tec << " " << tecClock << " "
-            << serviceTime << " " << initialTime << " " <<  packageTimeQueue << " "
-            << clockFinal << " " << packageTimeSystem << " " << freeTime << endl;
-        file << countPackage << ";" << replaceChar(to_string(tec), '.', ',') << ";" << replaceChar(to_string(tecClock), '.', ',')  << ";"
-             << replaceChar(to_string(serviceTime), '.', ',')  << ";" << replaceChar(to_string(initialTime), '.', ',')  << ";" << replaceChar(to_string(packageTimeQueue), '.', ',')  << ";"
-             << replaceChar(to_string(clockFinal), '.', ',')  << ";" << replaceChar(to_string(packageTimeSystem), '.', ',')  << ";" << replaceChar(to_string(freeTime), '.', ',')  << ";\n";
+                //Coluna 5 -> Tempo de início do serviço no relógio
+                if (tecClock > clockAux)
+                    initialTime = tecClock;
+                else
+                    initialTime = clockAux;
 
-        clockBefore = tecClock;
-        clockAux = clockFinal;
+                packageTimeQueue = initialTime - tecClock;   //Coluna 6 -> Tempo do pacote na fila
+                clockFinal = initialTime + serviceTime;              //Coluna 7 -> Tempo final do serviço no relógio
+                packageTimeSystem = clockFinal - tecClock;   //Coluna 8 -> Tempo do pacote no sistema
+                freeTime = initialTime - clockAux;        //Coluna 9 -> Tempo livre do operador
+
+                cout << countPackage << " " << tec << " " << tecClock << " "
+                    << serviceTime << " " << initialTime << " " <<  packageTimeQueue << " "
+                    << clockFinal << " " << packageTimeSystem << " " << freeTime << endl;
+                file << countPackage << ";" << replaceChar(to_string(tec), '.', ',') << ";" << replaceChar(to_string(tecClock), '.', ',')  << ";"
+                     << replaceChar(to_string(serviceTime), '.', ',')  << ";" << replaceChar(to_string(initialTime), '.', ',')  << ";" << replaceChar(to_string(packageTimeQueue), '.', ',')  << ";"
+                     << replaceChar(to_string(clockFinal), '.', ',')  << ";" << replaceChar(to_string(packageTimeSystem), '.', ',')  << ";" << replaceChar(to_string(freeTime), '.', ',')  << ";\n";
+
+                clockBefore = tecClock;
+                clockAux = clockFinal;
+            }
+            file.close();
+            break;
+        case 2:
+            file.open("letraB.csv");
+            file << "Nº Pacote;Tempo desde a última chegada do pacote anterior;Tempo de chegada no relógio;Tempo de serviço;Tempo de início do roteamento;Tempo do pacote na fila do roteador;Tempo final do roteamento no relógio;Tempo do pacote no roteador;Tempo livre do servidor;\n";
+
+            for (int countPackage = 1; countPackage <= numPackages; countPackage++){
+                tec = generateColumnMC(matTecB);        //Coluna 2 -> Tempo desde a última chegada
+                tecClock = clockBefore + tec;         //Coluna 3 -> Tempo de chegada no relógio
+                serviceTime = generateColumnMC(matTsB);               //Coluna 4 -> Tempo de serviço
+
+                //Coluna 5 -> Tempo de início do serviço no relógio
+                if (tecClock > clockAux)
+                    initialTime = tecClock;
+                else
+                    initialTime = clockAux;
+
+                packageTimeQueue = initialTime - tecClock;   //Coluna 6 -> Tempo do pacote na fila
+                clockFinal = initialTime + serviceTime;              //Coluna 7 -> Tempo final do serviço no relógio
+                packageTimeSystem = clockFinal - tecClock;   //Coluna 8 -> Tempo do pacote no sistema
+                freeTime = initialTime - clockAux;        //Coluna 9 -> Tempo livre do operador
+
+                cout << countPackage << " " << tec << " " << tecClock << " "
+                    << serviceTime << " " << initialTime << " " <<  packageTimeQueue << " "
+                    << clockFinal << " " << packageTimeSystem << " " << freeTime << endl;
+                file << countPackage << ";" << replaceChar(to_string(tec), '.', ',') << ";" << replaceChar(to_string(tecClock), '.', ',')  << ";"
+                     << replaceChar(to_string(serviceTime), '.', ',')  << ";" << replaceChar(to_string(initialTime), '.', ',')  << ";" << replaceChar(to_string(packageTimeQueue), '.', ',')  << ";"
+                     << replaceChar(to_string(clockFinal), '.', ',')  << ";" << replaceChar(to_string(packageTimeSystem), '.', ',')  << ";" << replaceChar(to_string(freeTime), '.', ',')  << ";\n";
+
+                clockBefore = tecClock;
+                clockAux = clockFinal;
+            }
+            file.close();
+            break;
+
     }
-    file.close();
-    return 0;
 }
