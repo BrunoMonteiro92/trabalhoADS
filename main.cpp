@@ -51,16 +51,16 @@ double matTecB [ROWS][COLUMNS] = {
 };
 
 double matTsB [ROWS][COLUMNS] = {
-	{(double)(0+5)/2, 0.01, 0.06},
-	{(double)(5+10)/2, 0.07, 0.11},
-	{(double)(10+15)/2, 0.12, 0.34},
-	{(double)(15+20)/2, 0.35, 0.54},
-	{(double)(20+25)/2, 0.55, 0.75},
-	{(double)(25+30)/2, 0.76, 0.87},
-	{(double)(30+35)/2, 0.88, 0.96},
-	{(double)(35+40)/2, 0.97, 0.97},
-	{(double)(40+45)/2, 0.98, 0.99},
-	{(double)(45+100)/2, 1.00, 1.00}
+	{(double)roundNumber((9.00+9.55)/2), 0.01, 0.06},
+	{(double)roundNumber((9.55+10.10)/2), 0.07, 0.11},
+	{(double)roundNumber((10.10+10.65)/2), 0.12, 0.34},
+	{(double)roundNumber((10.65+11.20)/2), 0.35, 0.54},
+	{(double)roundNumber((11.20+11.75)/2), 0.55, 0.75},
+	{(double)roundNumber((11.75+12.30)/2), 0.76, 0.87},
+	{(double)roundNumber((12.30+12.85)/2), 0.88, 0.96},
+	{(double)roundNumber((12.85+13.40)/2), 0.97, 0.97},
+	{(double)roundNumber((13.40+13.95)/2), 0.98, 0.99},
+	{(double)roundNumber((13.95+14.50)/2), 1.00, 1.00}
 };
 
 //Função para gerar número aleatório entre 0 e 1
