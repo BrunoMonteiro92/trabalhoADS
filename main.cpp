@@ -1,7 +1,7 @@
 /***
 UECE - Universidade Estadual do Ceará
 Curso de Ciência da Computação
-6ª Lista - Avaliação de Desempenho de Sistemas
+7ª Lista - Avaliação de Desempenho de Sistemas
 
 Aluno: Bruno Marques Monteiro
 Matrícula: 1157934
